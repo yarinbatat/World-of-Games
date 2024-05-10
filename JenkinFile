@@ -1,0 +1,56 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git 'https://github.com/yarinbatat/World-of-Games.git'
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    docker.build('my-game-app')
+                }
+            }
+        }
+
+        stage('Run') {
+            steps {
+                script {
+                    docker.image('my-game-app').run('-p 8777:8777 -v $(pwd)/Scores.txt:/app/Scores.txt')
+                }
+            }
+        }
+
+        stage('Test') {
+            steps {
+                script {
+                    docker.image('my-game-app').inside {
+                        sh 'python e2e.py'
+                    }
+                }
+            }
+        }
+
+        stage('Finalize') {
+            steps {
+                script {
+                    docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
+                        docker.image('my-game-app').push('latest')
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            script {
+                docker.image('my-game-app').stop()
+                docker.image('my-game-app').remove()
+            }
+        }
+    }
+}
