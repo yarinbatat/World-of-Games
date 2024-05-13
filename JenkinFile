@@ -11,7 +11,7 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    docker.build('my-game-app')
+                    docker.build('wog_yarin')
                 }
             }
         }
@@ -19,7 +19,7 @@ pipeline {
         stage('Run') {
             steps {
                 script {
-                    docker.image('my-game-app').run('-p 8777:8777 -v $(pwd)/Scores.txt:/app/Scores.txt')
+                    docker.image('wog_yarin').run('-p 8777:8777 -v $(pwd)/Scores.txt:/app/Scores.txt')
                 }
             }
         }
@@ -27,7 +27,7 @@ pipeline {
         stage('Test') {
             steps {
                 script {
-                    docker.image('my-game-app').inside {
+                    docker.image('wog_yarin').inside {
                         sh 'python e2e.py'
                     }
                 }
@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
-                        docker.image('my-game-app').push('latest')
+                        docker.image('wog_yarin').push('latest')
                     }
                 }
             }
@@ -48,8 +48,8 @@ pipeline {
     post {
         always {
             script {
-                docker.image('my-game-app').stop()
-                docker.image('my-game-app').remove()
+                docker.image('wog_yarin').stop()
+                docker.image('wog_yarin').remove()
             }
         }
     }
