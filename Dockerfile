@@ -3,4 +3,4 @@ COPY . .
 WORKDIR /app
 RUN pip install -r requirements.txt
 #EXPOSE 8777
-CMD ["python", "MainGame.py", "MainScores.py"]
+CMD ["python", "MainScores.py"]
