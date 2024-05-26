@@ -1,5 +1,3 @@
-selenuim
+selenium
 requests
 flask
-time
-random
